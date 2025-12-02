@@ -441,8 +441,8 @@ export default function ComparativeSimulator() {
   const timelineLabels =
     timelineLength > 0
       ? Array.from({ length: timelineLength }, (_, i) =>
-          createTimeLabel(i, timelineLength)
-        )
+        createTimeLabel(i, timelineLength)
+      )
       : [];
   const buildSeries = (
     history: SimulationState[],
@@ -471,8 +471,8 @@ export default function ComparativeSimulator() {
       {
         label: "RL p95 latency",
         data: buildSeries(rlHistory, (s) => s.p95Latency),
-        borderColor: "rgb(16, 185, 129)",
-        backgroundColor: "rgba(16, 185, 129, 0.1)",
+        borderColor: "rgb(6, 182, 212)",
+        backgroundColor: "rgba(6, 182, 212, 0.1)",
         tension: 0.4,
         fill: true,
       },
@@ -493,8 +493,8 @@ export default function ComparativeSimulator() {
       {
         label: "RL instances",
         data: buildSeries(rlHistory, (s) => s.instances),
-        borderColor: "rgb(16, 185, 129)",
-        backgroundColor: "rgba(16, 185, 129, 0.2)",
+        borderColor: "rgb(6, 182, 212)",
+        backgroundColor: "rgba(6, 182, 212, 0.2)",
         tension: 0.1,
         fill: true,
       },
@@ -529,8 +529,8 @@ export default function ComparativeSimulator() {
       {
         label: "RL cumulative violations",
         data: buildSeries(rlHistory, (s) => s.slaViolations),
-        borderColor: "rgb(34, 197, 94)",
-        backgroundColor: "rgba(34, 197, 94, 0.15)",
+        borderColor: "rgb(6, 182, 212)",
+        backgroundColor: "rgba(6, 182, 212, 0.15)",
         tension: 0.25,
         fill: true,
       },
@@ -557,8 +557,8 @@ export default function ComparativeSimulator() {
           rlHistory,
           (s) => s.infraCost + s.slaViolations * SLA_PENALTY_PER_VIOLATION
         ),
-        borderColor: "rgb(45, 212, 191)",
-        backgroundColor: "rgba(45, 212, 191, 0.1)",
+        borderColor: "rgb(34, 211, 238)",
+        backgroundColor: "rgba(34, 211, 238, 0.1)",
         tension: 0.35,
         fill: true,
       },
@@ -795,8 +795,8 @@ export default function ComparativeSimulator() {
               </div>
             </motion.div>
 
-            <motion.div className="bg-card/50 border-2 border-green-500/30 p-6 rounded-lg">
-              <h2 className="text-2xl font-bold text-green-400 mb-4">
+            <motion.div className="bg-card/50 border-2 border-cyan-500/30 p-6 rounded-lg">
+              <h2 className="text-2xl font-bold text-cyan-400 mb-4">
                 RL-Based (Proactive)
               </h2>
               <div className="mb-4">
@@ -804,10 +804,10 @@ export default function ComparativeSimulator() {
                   Active capacity per provider
                 </p>
                 <div className="grid gap-3 sm:grid-cols-2">
-                  <div className="rounded-md border border-green-500/20 bg-green-500/5 p-3">
+                  <div className="rounded-md border border-cyan-500/20 bg-cyan-500/5 p-3">
                     <ServerGrid
                       count={rlState.awsInstances}
-                      color="bg-green-500/20 text-green-400"
+                      color="bg-cyan-500/20 text-cyan-400"
                       label="AWS"
                     />
                     <p className="text-xs text-muted-foreground mt-2">
@@ -818,10 +818,10 @@ export default function ComparativeSimulator() {
                       Accumulated cost: ${rlState.providerCost.aws.toFixed(2)}
                     </p>
                   </div>
-                  <div className="rounded-md border border-green-500/20 bg-green-500/5 p-3">
+                  <div className="rounded-md border border-cyan-500/20 bg-cyan-500/5 p-3">
                     <ServerGrid
                       count={rlState.gcpInstances}
-                      color="bg-green-500/10 text-green-300"
+                      color="bg-cyan-500/10 text-cyan-300"
                       label="GCP"
                     />
                     <p className="text-xs text-muted-foreground mt-2">
@@ -846,20 +846,20 @@ export default function ComparativeSimulator() {
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">p95 latency:</span>
                   <span
-                    className={`font-bold ${rlState.p95Latency > SLA_THRESHOLD ? "text-red-400" : "text-green-400"}`}
+                    className={`font-bold ${rlState.p95Latency > SLA_THRESHOLD ? "text-red-400" : "text-cyan-400"}`}
                   >
                     {rlState.p95Latency.toFixed(0)}ms
                   </span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">SLA Violations:</span>
-                  <span className="font-bold text-green-400">
+                  <span className="font-bold text-cyan-400">
                     {rlState.slaViolations}
                   </span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Violation rate:</span>
-                  <span className="font-bold text-green-400">
+                  <span className="font-bold text-cyan-400">
                     {rlViolationRate.toFixed(1)}%
                   </span>
                 </div>
@@ -881,7 +881,7 @@ export default function ComparativeSimulator() {
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">SLA penalty:</span>
-                  <span className="font-bold text-green-300">
+                  <span className="font-bold text-cyan-300">
                     ${rlPenaltyCost.toFixed(2)}
                   </span>
                 </div>
@@ -889,7 +889,7 @@ export default function ComparativeSimulator() {
                   <span className="text-muted-foreground font-semibold">
                     Total cost:
                   </span>
-                  <span className="font-bold text-green-400">
+                  <span className="font-bold text-cyan-400">
                     ${rlTotalCost.toFixed(2)}
                   </span>
                 </div>
@@ -962,11 +962,11 @@ export default function ComparativeSimulator() {
                     {thresholdPenaltyCost.toFixed(2)}
                   </p>
                 </div>
-                <div className="rounded-lg border border-green-500/20 bg-green-500/5 p-4">
+                <div className="rounded-lg border border-cyan-500/20 bg-cyan-500/5 p-4">
                   <p className="text-xs uppercase text-muted-foreground tracking-wide">
                     RL total
                   </p>
-                  <p className="text-2xl font-mono text-green-300 mt-1">
+                  <p className="text-2xl font-mono text-cyan-300 mt-1">
                     ${rlTotalCost.toFixed(2)}
                   </p>
                   <p className="text-xs text-muted-foreground mt-2">
@@ -979,7 +979,7 @@ export default function ComparativeSimulator() {
                 {rlIsCheaper ? (
                   <span>
                     RL is currently{" "}
-                    <span className="text-green-300 font-semibold">
+                    <span className="text-cyan-300 font-semibold">
                       ${Math.abs(totalCostDelta).toFixed(2)}
                     </span>{" "}
                     cheaper overall thanks to fewer SLA penalties.
@@ -1043,7 +1043,7 @@ export default function ComparativeSimulator() {
                     <span className="text-red-300">
                       Threshold {item.threshold}
                     </span>
-                    <span className="text-green-300">RL {item.rl}</span>
+                    <span className="text-cyan-300">RL {item.rl}</span>
                   </div>
                   <p className="text-xs text-muted-foreground mt-3">
                     {item.insight}

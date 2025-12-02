@@ -21,7 +21,6 @@ Efficient resource management in multicloud environments represents a critical c
 Through rigorous experimentation based on the AWARE framework (Qiu et al., 2023) and implementation using Gymnasium and Stable-Baselines3, we demonstrate that RL agents based on Proximal Policy Optimization (PPO) achieve a 75.6% reduction in SLA violations compared to threshold-based methods, with a moderate increase in hourly infrastructure spending (about 49%), which is more than compensated for by the reduction in SLA penalties and churn, as quantified in the ROI analysis.
 The analysis includes complete Markov Decision Process (MDP) formulation, practical implementation, experimental validation with real workload traces, and critical discussion of limitations and future directions.
 Keywords: Reinforcement Learning, Cloud Computing, Auto-Scaling, Multicloud, Prescriptive Analytics, Proximal Policy Optimization
-
 1. Introduction
 1.1 Context and Motivation
 The global cloud computing market surpassed $500 billion in 2023, with projections of continued growth driven by digital transformation across all industry sectors (Gartner, 2023). Within this ecosystem, multicloud strategies—where organizations distribute workloads across multiple providers such as AWS, GCP, and Azure—have become predominant for three main reasons: mitigation of vendor lock-in, increased resilience through geographic redundancy, and cost optimization by exploiting competitive pricing among providers (Armbrust et al., 2010).

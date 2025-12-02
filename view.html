@@ -1423,87 +1423,50 @@
 
     <!-- SLIDE 12: RESULTS -->
     <div class="slide">
-      <!-- Speaker Badge: Person 4 -->
-      <div class="speaker-badge">
-        <div class="speaker-img" style="border-color: var(--accent-gold)"><img src="client/public/images/jean-pain.png"
-            alt="Jean Pain" /></div>
-        <div class="speaker-info">
-          <h4>Jean Pain</h4>
-          <span>Performance & ROI</span>
-        </div>
+      <h2 style="text-align: left; margin-bottom: 10px;">Performance Results</h2>
+
+      <div style="text-align: center; margin-bottom: 40px;">
+        <div style="font-size: 6rem; font-weight: 800; color: var(--accent-green);">75.6%</div>
+        <p style="font-size: 1.2rem; color: #fff;">Reduction in SLA Violations</p>
       </div>
-      <h2>Performance Results</h2>
-      <div style="
-            display: flex;
-            justify-content: center;
-            gap: 60px;
-            margin-bottom: 40px;
-          ">
-        <div style="text-align: center">
-          <div style="
-                font-size: 5rem;
-                font-weight: 800;
-                color: var(--accent-green);
-              ">
-            75.6%
-          </div>
-          <p>SLA Violation Reduction</p>
-        </div>
-        <div style="text-align: center">
-          <div style="
-                font-size: 5rem;
-                font-weight: 800;
-                color: var(--accent-cyan);
-              ">
-            95ms
-          </div>
-          <p>Avg Latency (vs 187ms)</p>
-        </div>
-      </div>
-      <div class="glass-panel" style="width: 100%; max-width: 800px">
-        <div style="
-              display: grid;
-              grid-template-columns: 1fr 1fr 1fr;
-              border-bottom: 1px solid #555;
-              padding-bottom: 10px;
-              font-weight: bold;
-              color: var(--accent-cyan);
-            ">
-          <div>Method</div>
-          <div>SLA Violations</div>
-          <div>Avg Latency</div>
-        </div>
-        <div style="
-              display: grid;
-              grid-template-columns: 1fr 1fr 1fr;
-              padding: 15px 0;
-              border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            ">
-          <div>Threshold-Based</div>
-          <div>8.7%</div>
-          <div>187 ms</div>
-        </div>
-        <div style="
-              display: grid;
-              grid-template-columns: 1fr 1fr 1fr;
-              padding: 15px 0;
-              border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-            ">
-          <div>Target-Tracking</div>
-          <div>6.3%</div>
-          <div>162 ms</div>
-        </div>
-        <div style="
-              display: grid;
-              grid-template-columns: 1fr 1fr 1fr;
-              padding: 15px 0;
-              color: var(--accent-green);
-              font-weight: bold;
-            ">
-          <div>Our PPO Agent</div>
-          <div>2.1%</div>
-          <div>95 ms</div>
-        </div>
+
+      <div class="glass-panel" style="padding: 0; overflow: hidden; width: 100%; max-width: 1000px;">
+        <table style="width: 100%; border-collapse: collapse; text-align: left;">
+          <thead>
+            <tr style="background: rgba(255,255,255,0.1); color: var(--accent-cyan);">
+              <th style="padding: 15px 20px; font-weight: 600;">Method</th>
+              <th style="padding: 15px 20px; font-weight: 600;">SLA Violations</th>
+              <th style="padding: 15px 20px; font-weight: 600;">Avg Latency (ms)</th>
+              <th style="padding: 15px 20px; font-weight: 600;">Improvement</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+              <td style="padding: 15px 20px; font-weight: bold; color: #fff;">Threshold-Based</td>
+              <td style="padding: 15px 20px; color: var(--accent-red); font-weight: bold;">8.7%</td>
+              <td style="padding: 15px 20px; color: var(--accent-red);">187 ms</td>
+              <td style="padding: 15px 20px; color: #aaa;">Baseline</td>
+            </tr>
+            <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+              <td style="padding: 15px 20px; font-weight: bold; color: #fff;">Target-Tracking</td>
+              <td style="padding: 15px 20px; color: var(--accent-red);">6.3%</td>
+              <td style="padding: 15px 20px; color: #ddd;">162 ms</td>
+              <td style="padding: 15px 20px; color: #ddd;">27.6% better</td>
+            </tr>
+            <tr style="border-bottom: 1px solid rgba(255,255,255,0.05);">
+              <td style="padding: 15px 20px; font-weight: bold; color: #fff;">Reactive-RL</td>
+              <td style="padding: 15px 20px; color: #ddd;">3.8%</td>
+              <td style="padding: 15px 20px; color: #ddd;">128 ms</td>
+              <td style="padding: 15px 20px; color: #ddd;">56.3% better</td>
+            </tr>
+            <tr style="background: rgba(0, 255, 157, 0.1);">
+              <td style="padding: 15px 20px; font-weight: bold; color: var(--accent-green);">Our PPO Agent</td>
+              <td style="padding: 15px 20px; color: var(--accent-green); font-weight: bold;">2.1%</td>
+              <td style="padding: 15px 20px; color: var(--accent-green); font-weight: bold;">95 ms</td>
+              <td style="padding: 15px 20px; color: var(--accent-green); font-weight: bold;">75.6% better</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
       <div class="slide-num">12 / 16</div>
     </div>
@@ -1674,52 +1637,74 @@
     <!-- SLIDE 14: STATISTICAL VALIDATION -->
     <div class="slide">
       <h2>Statistical Validation</h2>
-      <p>Validated against benchmarks from AWARE paper (USENIX ATC 2023).</p>
-      <div class="grid-3" style="margin-top: 40px">
-        <div class="glass-panel" style="text-align: center">
-          <i class="fa-solid fa-scale-balanced" style="
-                font-size: 40px;
-                color: var(--accent-cyan);
-                margin-bottom: 15px;
-              "></i>
+
+      <div class="grid-3" style="margin-top: 20px; margin-bottom: 30px">
+        <div class="glass-panel" style="text-align: center; padding: 20px;">
+          <div style="font-size: 0.9rem; color: var(--accent-cyan); margin-bottom: 5px;">Paired t-test</div>
           <div style="
                 font-size: 2.5rem;
                 font-weight: bold;
-                color: var(--accent-cyan);
+                color: #fff;
               ">
             p &lt; 0.001
           </div>
-          <p style="font-size: 0.9rem">Paired t-test. Highly Significant.</p>
+          <p style="font-size: 0.8rem; margin-top: 5px;">Highly Significant</p>
         </div>
-        <div class="glass-panel" style="text-align: center">
-          <i class="fa-solid fa-ruler-horizontal" style="
-                font-size: 40px;
-                color: var(--accent-purple);
-                margin-bottom: 15px;
-              "></i>
+        <div class="glass-panel" style="text-align: center; padding: 20px;">
+          <div style="font-size: 0.9rem; color: var(--accent-cyan); margin-bottom: 5px;">Effect Size (Cohen's d)</div>
           <div style="
                 font-size: 2.5rem;
                 font-weight: bold;
-                color: var(--accent-purple);
+                color: #fff;
               ">
             3.76
           </div>
-          <p style="font-size: 0.9rem">Cohen's d. Very Large Effect Size.</p>
+          <p style="font-size: 0.8rem; margin-top: 5px;">Very Large Effect</p>
         </div>
-        <div class="glass-panel" style="text-align: center">
-          <i class="fa-solid fa-bullseye" style="
-                font-size: 40px;
-                color: var(--accent-gold);
-                margin-bottom: 15px;
-              "></i>
+        <div class="glass-panel" style="text-align: center; padding: 20px;">
+          <div style="font-size: 0.9rem; color: var(--accent-cyan); margin-bottom: 5px;">95% Confidence Interval</div>
           <div style="
-                font-size: 2.5rem;
+                font-size: 2rem;
                 font-weight: bold;
-                color: var(--accent-gold);
+                color: #fff;
               ">
-            95%
+            [6.1%, 7.2%]
           </div>
-          <p style="font-size: 0.9rem">Confidence Interval [6.1%, 7.2%].</p>
+          <p style="font-size: 0.8rem; margin-top: 5px;">Violation Reduction</p>
+        </div>
+      </div>
+
+      <div style="text-align: left; max-width: 1000px; width: 100%;">
+        <h3 style="color: var(--accent-cyan); margin-bottom: 15px; font-size: 1.2rem;">Interpretation</h3>
+        <p style="text-align: left; font-size: 0.9rem; margin-bottom: 10px; max-width: 100%; color: #ccc;">
+          <strong style="color: #fff;">Statistical Significance:</strong> The p-value < 0.001 indicates that the
+            performance improvement is statistically significant with>99.9% confidence, ruling out random chance.
+        </p>
+        <p style="text-align: left; font-size: 0.9rem; margin-bottom: 25px; max-width: 100%; color: #ccc;">
+          <strong style="color: #fff;">Practical Significance:</strong> Cohen's d = 3.76 represents a very large effect
+          size (d > 0.8 is considered large), confirming that the improvement is not only statistically significant but
+          also practically meaningful.
+        </p>
+
+        <div class="glass-panel"
+          style="padding: 15px; margin-bottom: 10px; border-left: 4px solid rgba(255,255,255,0.2); background: rgba(255,255,255,0.05);">
+          <p style="text-align: left; font-size: 0.8rem; margin: 0; max-width: 100%; font-style: italic; color: #aaa;">
+            <strong style="color: #fff; font-style: normal;">Validation:</strong> Results validated against AWARE:
+            Automate Workload Autoscaling with Reinforcement Learning (Qiu et al., USENIX ATC 2023), a peer-reviewed
+            academic benchmark demonstrating similar RL-based auto-scaling improvements in production cloud
+            environments.
+          </p>
+        </div>
+
+        <div class="glass-panel"
+          style="padding: 15px; border-left: 4px solid var(--accent-gold); background: rgba(255, 189, 0, 0.05);">
+          <p style="text-align: left; font-size: 0.8rem; margin: 0; max-width: 100%; font-style: italic; color: #aaa;">
+            <strong style="color: var(--accent-gold); font-style: normal;">Note on Data:</strong> This study uses
+            synthetic workload traces generated through simulation to enable controlled, reproducible experimentation.
+            Workload patterns reflect realistic characteristics (temporal patterns, traffic spikes) based on publicly
+            available traces and literature. ROI parameters use industry-representative benchmarks (Gainsight 2023,
+            Pacific Crest SaaS Survey 2023).
+          </p>
         </div>
       </div>
       <div class="slide-num">14 / 16</div>
@@ -1790,7 +1775,7 @@
 
         </div>
       </div>
-      <div class="slide-num">15 / 16</div>
+      <div class="slide-num">15 / 17</div>
     </div>
 
     <!-- SLIDE 16: CONCLUSION -->
@@ -1835,7 +1820,7 @@
           PoC → Training → Shadow Mode → Canary → Full Rollout
         </p>
       </div>
-      <div class="slide-num">15 / 16</div>
+      <div class="slide-num">16 / 17</div>
     </div>
 
     <!-- SLIDE 16: THANK YOU -->
@@ -1882,7 +1867,7 @@
         authors (Qiu et al., USENIX ATC 2023) for validation benchmarks, and
         the open-source community.
       </div>
-      <div class="slide-num">16 / 16</div>
+      <div class="slide-num">17 / 17</div>
     </div>
   </div>
 
@@ -2003,7 +1988,8 @@
   </script>
   <!-- CHAT UI -->
   <div id="chat-button" class="chat-button" style="display: none;">
-    <i class="fa-solid fa-message"></i>
+    <img src="client/public/images/mio.png" alt="Chat"
+      style="width: 100%; height: 100%; border-radius: 50%; object-fit: cover;">
   </div>
 
   <div id="chat-window" class="chat-window">
@@ -2030,13 +2016,14 @@
       height: 60px;
       background: var(--accent-cyan);
       border-radius: 50%;
+      border: 3px solid var(--accent-cyan);
       display: flex;
       justify-content: center;
       align-items: center;
       color: #000;
       font-size: 24px;
       cursor: pointer;
-      box-shadow: 0 0 20px rgba(0, 242, 255, 0.4);
+      box-shadow: 0 0 10px var(--accent-cyan), 0 0 20px var(--accent-cyan), 0 0 40px var(--accent-cyan);
       z-index: 1000;
       transition: transform 0.3s, box-shadow 0.3s;
       animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
