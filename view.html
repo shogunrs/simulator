@@ -2001,6 +2001,281 @@
       }
     });
   </script>
+  <!-- CHAT UI -->
+  <div id="chat-button" class="chat-button" style="display: none;">
+    <i class="fa-solid fa-message"></i>
+  </div>
+
+  <div id="chat-window" class="chat-window">
+    <div class="chat-header">
+      <span>Project Assistant</span>
+      <div class="close-chat"><i class="fa-solid fa-xmark"></i></div>
+    </div>
+    <div class="chat-messages" id="chat-messages">
+      <!-- Messages will appear here -->
+    </div>
+    <div class="chat-input-area">
+      <input type="text" id="chat-input" placeholder="Ask about the project..." />
+      <button id="chat-send"><i class="fa-solid fa-paper-plane"></i></button>
+    </div>
+  </div>
+
+  <style>
+    /* Chat UI Styles */
+    .chat-button {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      width: 60px;
+      height: 60px;
+      background: var(--accent-cyan);
+      border-radius: 50%;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: #000;
+      font-size: 24px;
+      cursor: pointer;
+      box-shadow: 0 0 20px rgba(0, 242, 255, 0.4);
+      z-index: 1000;
+      transition: transform 0.3s, box-shadow 0.3s;
+      animation: popIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    }
+
+    .chat-button:hover {
+      transform: scale(1.1);
+      box-shadow: 0 0 30px rgba(0, 242, 255, 0.6);
+    }
+
+    .chat-window {
+      position: fixed;
+      bottom: 100px;
+      right: 30px;
+      width: 350px;
+      height: 500px;
+      background: rgba(10, 10, 25, 0.95);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 15px;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      z-index: 1000;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+      transform: translateY(20px);
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.3s ease;
+    }
+
+    .chat-window.active {
+      transform: translateY(0);
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .chat-header {
+      padding: 15px;
+      background: rgba(255, 255, 255, 0.05);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: 600;
+      color: var(--accent-cyan);
+    }
+
+    .close-chat {
+      cursor: pointer;
+      opacity: 0.7;
+      transition: opacity 0.2s;
+    }
+
+    .close-chat:hover {
+      opacity: 1;
+    }
+
+    .chat-messages {
+      flex: 1;
+      padding: 15px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .message {
+      max-width: 85%;
+      padding: 10px 15px;
+      border-radius: 10px;
+      font-size: 0.9rem;
+      line-height: 1.4;
+      word-wrap: break-word;
+    }
+
+    .message.user {
+      align-self: flex-end;
+      background: var(--accent-cyan);
+      color: #000;
+      border-bottom-right-radius: 2px;
+    }
+
+    .message.assistant {
+      align-self: flex-start;
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+      border-bottom-left-radius: 2px;
+    }
+
+    .chat-input-area {
+      padding: 15px;
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      display: flex;
+      gap: 10px;
+    }
+
+    #chat-input {
+      flex: 1;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 20px;
+      padding: 10px 15px;
+      color: #fff;
+      font-family: "Outfit", sans-serif;
+      outline: none;
+    }
+
+    #chat-input:focus {
+      border-color: var(--accent-cyan);
+    }
+
+    #chat-send {
+      background: var(--accent-cyan);
+      border: none;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      color: #000;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: transform 0.2s;
+    }
+
+    #chat-send:hover {
+      transform: scale(1.1);
+    }
+
+    @keyframes popIn {
+      0% {
+        transform: scale(0);
+      }
+
+      80% {
+        transform: scale(1.1);
+      }
+
+      100% {
+        transform: scale(1);
+      }
+    }
+  </style>
+
+  <script>
+    // Chat Logic
+    const chatButton = document.getElementById('chat-button');
+    const chatWindow = document.getElementById('chat-window');
+    const closeChat = document.querySelector('.close-chat');
+    const chatInput = document.getElementById('chat-input');
+    const chatSend = document.getElementById('chat-send');
+    const chatMessages = document.getElementById('chat-messages');
+
+    // Toggle Chat Window
+    chatButton.addEventListener('click', () => {
+      chatWindow.classList.toggle('active');
+      if (chatWindow.classList.contains('active')) {
+        chatInput.focus();
+      }
+    });
+
+    closeChat.addEventListener('click', () => {
+      chatWindow.classList.remove('active');
+    });
+
+    // Send Message
+    async function sendMessage() {
+      const text = chatInput.value.trim();
+      if (!text) return;
+
+      // Add User Message
+      addMessage(text, 'user');
+      chatInput.value = '';
+
+      // Loading state
+      const loadingId = addMessage('Thinking...', 'assistant');
+
+      try {
+        let response;
+        if (window.electron && window.electron.ragQuery) {
+          response = await window.electron.ragQuery(text);
+        } else {
+          response = "Error: Electron backend not connected.";
+        }
+
+        // Remove loading and add response
+        document.getElementById(loadingId).remove();
+        addMessage(response, 'assistant');
+      } catch (error) {
+        document.getElementById(loadingId).remove();
+        addMessage("Error: " + error.message, 'assistant');
+      }
+    }
+
+    function addMessage(text, role) {
+      const div = document.createElement('div');
+      div.className = `message ${role}`;
+      div.id = 'msg-' + Date.now();
+
+      // Simple markdown-like parsing for code blocks
+      if (role === 'assistant') {
+        // Convert newlines to <br>
+        let formatted = text.replace(/\n/g, '<br>');
+        // Bold
+        formatted = formatted.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+        div.innerHTML = formatted;
+      } else {
+        div.textContent = text;
+      }
+
+      chatMessages.appendChild(div);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+      return div.id;
+    }
+
+    chatSend.addEventListener('click', sendMessage);
+    chatInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') sendMessage();
+    });
+
+    // Visibility Logic (Show only on last slide)
+    const deckEl = document.querySelector('.deck-container');
+    const slidesList = document.querySelectorAll('.slide');
+
+    deckEl.addEventListener('scroll', () => {
+      const scrollPosition = deckEl.scrollTop + deckEl.clientHeight;
+      const totalHeight = deckEl.scrollHeight;
+
+      // Check if we are near the bottom (last slide)
+      // Allow a small buffer (e.g., 50px)
+      if (totalHeight - scrollPosition < 50) {
+        chatButton.style.display = 'flex';
+      } else {
+        chatButton.style.display = 'none';
+        chatWindow.classList.remove('active');
+      }
+    });
+  </script>
 </body>
 
 </html>

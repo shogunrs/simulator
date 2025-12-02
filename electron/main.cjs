@@ -1,5 +1,6 @@
 const { app, BrowserWindow } = require("electron");
 const path = require("node:path");
+require('dotenv').config({ path: path.join(__dirname, '..', '.env') });
 
 const devServerURL = process.env.VITE_DEV_SERVER_URL || "http://localhost:3000";
 const APP_ID = "com.rl.autoscaling";
@@ -38,6 +39,76 @@ function createWindow() {
   const { ipcMain } = require('electron');
   ipcMain.on('navigate', (event, url) => {
     mainWindow.loadURL(url);
+  });
+
+  ipcMain.handle('rag:query', async (event, userQuery) => {
+    try {
+      const apiKey = process.env.GEMINI_API_KEY;
+      if (!apiKey) {
+        return "Error: GEMINI_API_KEY not found in .env file.";
+      }
+
+      const { GoogleGenerativeAI } = require("@google/generative-ai");
+      const { glob } = require("glob");
+      const fs = require("fs");
+
+      const genAI = new GoogleGenerativeAI(apiKey);
+      const geminiModel =
+        process.env.GEMINI_MODEL || "gemma-3-12b";
+      const buildModel = (modelName) =>
+        genAI.getGenerativeModel({
+          model: modelName,
+          requestOptions: { apiVersion: "v1" }, // v1beta can 404 with newer model names on some keys
+        });
+
+      // Read specific context file
+      const contextPath = path.join(__dirname, "..", "Final_Report_Complete_English.md");
+      let context = "";
+      try {
+        context = fs.readFileSync(contextPath, "utf-8");
+      } catch (err) {
+        console.error("Error reading context file:", err);
+        return "Error: Could not read context file Final_Report_Complete_English.md";
+      }
+
+      const prompt = `You are a helpful assistant for this project. 
+      Use the following context from the project's markdown files to answer the user's question.
+      If the answer is not in the context, say so, but try to be helpful based on general knowledge if applicable, 
+      but emphasize that it's not in the docs.
+      
+      Context:
+      ${context}
+      
+      User Question: ${userQuery}`;
+
+      const candidateModels = [geminiModel];
+      if (!candidateModels.includes("gemini-2.5-flash")) {
+        candidateModels.push("gemini-2.5-flash");
+      }
+
+      let lastError = null;
+      for (const modelName of candidateModels) {
+        try {
+          const model = buildModel(modelName);
+          const result = await model.generateContent(prompt);
+          const response = await result.response;
+          return response.text();
+        } catch (err) {
+          lastError = err;
+          const isModelNotFound =
+            err?.message && /not found|unsupported|404/i.test(err.message);
+          if (isModelNotFound) {
+            continue;
+          }
+          throw err;
+        }
+      }
+
+      throw lastError || new Error("Gemini generation failed");
+    } catch (error) {
+      console.error("RAG Error:", error);
+      return "Error processing request: " + error.message;
+    }
   });
 
   mainWindow.on('closed', () => {
