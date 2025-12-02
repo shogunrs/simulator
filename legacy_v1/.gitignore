@@ -1,0 +1,25 @@
+# Node/electron build artifacts
+dist/
+node_modules/
+*.log
+npm-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Environment/certs
+.env
+*.pfx
+
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+*.swp
+.vscode/
+.idea/
+
+# Tests/coverage
+coverage/
+
+# Large datasets
+core_pmu_1k/
+data/core_pmu_1k/
