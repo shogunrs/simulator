@@ -12,8 +12,8 @@
   <link
     href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=JetBrains+Mono:wght@400;700&display=swap"
     rel="stylesheet" />
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" />
-
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <style>
     /* --- CORE VARIABLES --- */
     :root {
@@ -2010,7 +2010,11 @@
   <div id="chat-window" class="chat-window">
     <div class="chat-header">
       <span>Project Assistant</span>
-      <div class="close-chat"><i class="fa-solid fa-xmark"></i></div>
+      <div style="display: flex; gap: 10px; align-items: center;">
+        <i class="fa-solid fa-trash" id="clear-chat" style="cursor: pointer; font-size: 0.8rem; opacity: 0.7;"
+          title="Clear History"></i>
+        <div class="close-chat"><i class="fa-solid fa-xmark"></i></div>
+      </div>
     </div>
     <div class="chat-messages" id="chat-messages">
       <!-- Messages will appear here -->
@@ -2129,6 +2133,11 @@
       border-bottom-left-radius: 2px;
     }
 
+    .message.assistant p {
+      margin: 0;
+      font-size: 0.9rem;
+    }
+
     .chat-input-area {
       padding: 15px;
       border-top: 1px solid rgba(255, 255, 255, 0.1);
@@ -2174,15 +2183,151 @@
         transform: scale(0);
       }
 
-      80% {
-        transform: scale(1.1);
-      }
-
       100% {
         transform: scale(1);
       }
     }
+
+    /* Typing Animation */
+    .typing-indicator {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 5px 0;
+    }
+
+    .typing-dot {
+      width: 6px;
+      height: 6px;
+      background-color: rgba(255, 255, 255, 0.7);
+      border-radius: 50%;
+      animation: typing 1.4s infinite ease-in-out both;
+    }
+
+    .typing-dot:nth-child(1) {
+      animation-delay: -0.32s;
+    }
+
+    .typing-dot:nth-child(2) {
+      animation-delay: -0.16s;
+    }
+
+    @keyframes typing {
+
+      0%,
+      80%,
+      100% {
+        transform: scale(0);
+      }
+
+      40% {
+        transform: scale(1);
+      }
+    }
+
+    /* Modal Styles */
+    .modal-overlay {
+      position: fixed;
+      inset: 0;
+      /* Replaces top/left/width/height for better support */
+      background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(5px);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      z-index: 9999;
+      /* Ensure it's on top of everything */
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+    }
+
+    .modal-overlay.active {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    /* Delete Modal Styles */
+    .delete-modal-content {
+      position: relative;
+      background: rgba(20, 20, 35, 0.95);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 25px;
+      border-radius: 15px;
+      width: 300px;
+      max-width: 90%;
+      height: auto !important;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      text-align: center;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+      transform: scale(0.9);
+      transition: transform 0.3s ease;
+    }
+
+    .modal-overlay.active .delete-modal-content {
+      transform: scale(1);
+    }
+
+    .modal-title {
+      font-size: 1.2rem;
+      font-weight: 600;
+      margin-bottom: 10px;
+      color: #fff;
+    }
+
+    .modal-text {
+      font-size: 0.9rem;
+      color: rgba(255, 255, 255, 0.7);
+      margin-bottom: 20px;
+    }
+
+    .modal-buttons {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+    }
+
+    .modal-btn {
+      padding: 8px 20px;
+      border-radius: 8px;
+      border: none;
+      cursor: pointer;
+      font-weight: 600;
+      transition: all 0.2s;
+    }
+
+    .modal-btn.cancel {
+      background: rgba(255, 255, 255, 0.1);
+      color: #fff;
+    }
+
+    .modal-btn.cancel:hover {
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    .modal-btn.confirm {
+      background: #ef4444;
+      color: #fff;
+    }
+
+    .modal-btn.confirm:hover {
+      background: #dc2626;
+    }
   </style>
+
+  <!-- Delete Confirmation Modal -->
+  <div id="delete-modal" class="modal-overlay">
+    <div class="delete-modal-content">
+      <div class="modal-title">Clear History?</div>
+      <div class="modal-text">This action cannot be undone.</div>
+      <div class="modal-buttons">
+        <button class="modal-btn cancel" id="cancel-delete">Cancel</button>
+        <button class="modal-btn confirm" id="confirm-delete">Delete</button>
+      </div>
+    </div>
+  </div>
 
   <script>
     // Chat Logic
@@ -2205,6 +2350,59 @@
       chatWindow.classList.remove('active');
     });
 
+    // Delete Modal Logic
+    const deleteModal = document.getElementById('delete-modal');
+    const cancelDelete = document.getElementById('cancel-delete');
+    const confirmDelete = document.getElementById('confirm-delete');
+
+    document.getElementById('clear-chat').addEventListener('click', () => {
+      deleteModal.classList.add('active');
+    });
+
+    cancelDelete.addEventListener('click', () => {
+      deleteModal.classList.remove('active');
+    });
+
+    confirmDelete.addEventListener('click', () => {
+      localStorage.removeItem('chat_history');
+      chatMessages.innerHTML = '';
+      deleteModal.classList.remove('active');
+    });
+
+    function saveChatHistory() {
+      const messages = [];
+      document.querySelectorAll('.message').forEach(msg => {
+        // Skip temporary messages
+        if (msg.dataset.temporary === 'true') return;
+
+        messages.push({
+          text: msg.innerHTML, // Save innerHTML to preserve formatting
+          role: msg.classList.contains('user') ? 'user' : 'assistant'
+        });
+      });
+      localStorage.setItem('chat_history', JSON.stringify(messages));
+    }
+
+    function loadChatHistory() {
+      const history = localStorage.getItem('chat_history');
+      if (history) {
+        const messages = JSON.parse(history);
+        messages.forEach(msg => {
+          addMessage(msg.text, msg.role, false, true); // Pass true for isHistoryLoad to avoid re-saving loop if needed, though simple addMessage is fine
+        });
+      }
+    }
+
+    // Load history on init
+    // We need to clear existing messages first if any (though usually empty on load)
+    chatMessages.innerHTML = '';
+    loadChatHistory();
+
+    chatSend.addEventListener('click', sendMessage);
+    chatInput.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') sendMessage();
+    });
+
     // Send Message
     async function sendMessage() {
       const text = chatInput.value.trim();
@@ -2215,7 +2413,8 @@
       chatInput.value = '';
 
       // Loading state
-      const loadingId = addMessage('Thinking...', 'assistant');
+      const loadingHtml = '<div class="typing-indicator"><div class="typing-dot"></div><div class="typing-dot"></div><div class="typing-dot"></div></div>';
+      const loadingId = addMessage(loadingHtml, 'assistant', true); // true for temporary
 
       try {
         let response;
@@ -2238,57 +2437,78 @@
         }
 
         // Remove loading and add response
-        document.getElementById(loadingId).remove();
+        const loadingEl = document.getElementById(loadingId);
+        if (loadingEl) loadingEl.remove();
+
         addMessage(response, 'assistant');
       } catch (error) {
-        document.getElementById(loadingId).remove();
+        const loadingEl = document.getElementById(loadingId);
+        if (loadingEl) loadingEl.remove();
         addMessage("Error: " + error.message, 'assistant');
       }
     }
 
-    function addMessage(text, role) {
+    // Modified addMessage to support temporary flag and unique IDs
+    function addMessage(text, role, isTemporary = false, isHistoryLoad = false) {
       const div = document.createElement('div');
       div.className = `message ${role}`;
-      div.id = 'msg-' + Date.now();
+      // Use a more unique ID to prevent collisions
+      div.id = 'msg-' + Date.now() + '-' + Math.random().toString(36).substr(2, 9);
+
+      if (isTemporary) {
+        div.dataset.temporary = 'true';
+      }
 
       // Simple markdown-like parsing for code blocks
-      if (role === 'assistant') {
-        // Convert newlines to <br>
-        let formatted = text.replace(/\n/g, '<br>');
-        // Bold
-        formatted = formatted.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
-        div.innerHTML = formatted;
+      if (role === 'assistant' && !isHistoryLoad) { // If loading from history, text is already formatted HTML
+        // Use marked to parse markdown
+        div.innerHTML = marked.parse(text);
       } else {
-        div.textContent = text;
+        // For user messages or history loading (which preserves HTML), just set innerHTML/textContent
+        // Note: For history load, we trust the stored HTML. For new user msg, textContent is safer but we want consistency.
+        // If loading from history, it's already HTML.
+        if (isHistoryLoad) {
+          div.innerHTML = text;
+        } else {
+          div.textContent = text;
+        }
       }
 
       chatMessages.appendChild(div);
       chatMessages.scrollTop = chatMessages.scrollHeight;
+
+      // Save to localStorage only if not temporary and not loading from history (to avoid redundant saves)
+      if (!isTemporary && !isHistoryLoad) {
+        saveChatHistory();
+      }
+
       return div.id;
     }
-
-    chatSend.addEventListener('click', sendMessage);
-    chatInput.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') sendMessage();
-    });
 
     // Visibility Logic (Show only on last slide)
     const deckEl = document.querySelector('.deck-container');
     const slidesList = document.querySelectorAll('.slide');
 
-    deckEl.addEventListener('scroll', () => {
-      const scrollPosition = deckEl.scrollTop + deckEl.clientHeight;
-      const totalHeight = deckEl.scrollHeight;
+    if (deckEl) {
+      deckEl.addEventListener('scroll', () => {
+        const scrollPosition = deckEl.scrollTop + deckEl.clientHeight;
+        const totalHeight = deckEl.scrollHeight;
 
-      // Check if we are near the bottom (last slide)
-      // Allow a small buffer (e.g., 50px)
-      if (totalHeight - scrollPosition < 50) {
-        chatButton.style.display = 'flex';
-      } else {
-        chatButton.style.display = 'none';
-        chatWindow.classList.remove('active');
-      }
-    });
+        // Check if we are near the bottom (last slide)
+        // Allow a small buffer (e.g., 50px)
+        if (totalHeight - scrollPosition < 50) {
+          chatButton.style.display = 'flex';
+        } else {
+          chatButton.style.display = 'none';
+          chatWindow.classList.remove('active');
+        }
+      });
+    } else {
+      // Fallback if deck-container is not found (e.g. if structure changed), show chat always or handle error
+      // For now, let's just log it and maybe show it by default if it's a single page app style without deck
+      console.warn('Deck container not found for scroll logic');
+      chatButton.style.display = 'flex';
+    }
   </script>
 </body>
 

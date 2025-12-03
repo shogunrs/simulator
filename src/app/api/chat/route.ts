@@ -31,10 +31,16 @@ export async function POST(req: Request) {
             );
         }
 
-        const prompt = `You are a helpful assistant for this project. 
-    Use the following context from the project's markdown files to answer the user's question.
-    If the answer is not in the context, say so, but try to be helpful based on general knowledge if applicable, 
-    but emphasize that it's not in the docs.
+        const prompt = `You are a helpful assistant for this project.
+Use the following context from the project's markdown files to answer the user's question.
+If the context contains more than one paragraph, always provide a summarized answer.
+If the answer is not in the context, say so, but try to be helpful using general knowledge when applicable,
+while emphasizing that the information is not in the docs.
+
+IMPORTANT CONSTRAINTS:
+1. Your response MUST be under 500 characters.
+2. Your response MUST be a single paragraph.
+3. Your response MUST be complete sentences and NEVER end abruptly or be cut off.
     
     Context:
     ${context}
