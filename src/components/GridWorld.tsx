@@ -101,7 +101,7 @@ export default function GridWorld() {
                 reward = 10;
                 done = true;
             } else if (HAZARDS.some((h) => h.x === nextX && h.y === nextY)) {
-                reward = -10;
+                reward = -100; // Huge penalty for hazards
                 done = true;
             }
 
@@ -124,8 +124,17 @@ export default function GridWorld() {
 
             if (done) {
                 setEpisode((e) => e + 1);
-                // Auto-decay epsilon (Fast decay: 10% reduction per episode)
-                setEpsilon((prev) => Math.max(0.01, prev * 0.9));
+                // Auto-decay epsilon
+                setEpsilon((prev) => {
+                    const nextEpsilon = Math.max(0, prev * 0.9);
+                    // If we are very confident (mastery), force 0 exploration for visual perfection
+                    if (nextEpsilon < 0.05) {
+                        // Reset total reward once to show "clean" performance
+                        if (prev >= 0.05) setTotalReward(0);
+                        return 0;
+                    }
+                    return nextEpsilon;
+                });
                 return START_POS; // Reset to start
             }
 
@@ -278,7 +287,7 @@ export default function GridWorld() {
 
                             {/* Mastery Indicator */}
                             <AnimatePresence>
-                                {epsilon < 0.1 && (
+                                {epsilon < 0.05 && (
                                     <motion.div
                                         initial={{ opacity: 0, y: 20 }}
                                         animate={{ opacity: 1, y: 0 }}
