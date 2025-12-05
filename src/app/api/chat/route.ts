@@ -18,15 +18,22 @@ export async function POST(req: Request) {
         const genAI = new GoogleGenerativeAI(apiKey);
         const model = genAI.getGenerativeModel({ model: process.env.GEMINI_MODEL || "gemini-2.0-flash" });
 
-        // Read context file
-        const contextPath = path.join(process.cwd(), "src", "data", "Final_Report_Complete_English.md");
-        let context = "";
-        try {
-            context = fs.readFileSync(contextPath, "utf-8");
-        } catch (err) {
-            console.error("Error reading context file:", err);
+        // Read context (Env Var > File)
+        let context = process.env.CHAT_CONTEXT || "";
+
+        if (!context) {
+            try {
+                const contextPath = path.join(process.cwd(), "src", "data", "Final_Report_Complete_English.md");
+                context = fs.readFileSync(contextPath, "utf-8");
+            } catch (err) {
+                console.error("Error reading context file:", err);
+                // Fallback or error handling
+            }
+        }
+
+        if (!context) {
             return NextResponse.json(
-                { error: "Could not read context file." },
+                { error: "Could not load context from ENV or file." },
                 { status: 500 }
             );
         }
