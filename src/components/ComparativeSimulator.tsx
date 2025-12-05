@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef, useCallback } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Play, Pause, RotateCcw, Server } from "lucide-react";
+import { Play, Pause, RotateCcw, Server, Zap } from "lucide-react";
+import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Line } from "react-chartjs-2";
 import {
@@ -618,26 +619,35 @@ export default function ComparativeSimulator() {
               ($0.089/h) • Decision interval ≈ 30s.
             </p>
           </div>
-          {fromPresentation && (
-            <button
-              onClick={() => {
-                // @ts-ignore
-                if (window.electron) {
-                  // @ts-ignore
-                  window.electron.navigate(fromPresentation + "#slide-10");
-                } else {
-                  try {
-                    window.location.replace(fromPresentation + "#slide-10");
-                  } catch (err) {
-                    window.location.href = fromPresentation + "#slide-10";
-                  }
-                }
-              }}
-              className="rounded-md bg-secondary px-3 py-2 text-sm font-semibold text-secondary-foreground border border-border/60 shadow-sm hover:bg-secondary/90"
+          <div className="flex gap-2">
+            <Link
+              href="/rl-explainer"
+              className="rounded-md bg-primary/10 px-3 py-2 text-sm font-semibold text-primary border border-primary/20 shadow-sm hover:bg-primary/20 transition-colors flex items-center gap-2"
             >
-              Back to presentation
-            </button>
-          )}
+              <Zap className="w-4 h-4" />
+              RL Basics
+            </Link>
+            {fromPresentation && (
+              <button
+                onClick={() => {
+                  // @ts-ignore
+                  if (window.electron) {
+                    // @ts-ignore
+                    window.electron.navigate(fromPresentation + "#slide-10");
+                  } else {
+                    try {
+                      window.location.replace(fromPresentation + "#slide-10");
+                    } catch (err) {
+                      window.location.href = fromPresentation + "#slide-10";
+                    }
+                  }
+                }}
+                className="rounded-md bg-secondary px-3 py-2 text-sm font-semibold text-secondary-foreground border border-border/60 shadow-sm hover:bg-secondary/90"
+              >
+                Back to presentation
+              </button>
+            )}
+          </div>
         </div>
       </div>
 
