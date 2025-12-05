@@ -204,8 +204,8 @@ export default function GridWorld() {
                                         {/* Heatmap Overlay */}
                                         {!isGoal && !isHazard && (
                                             <div
-                                                className="absolute inset-0 bg-primary transition-opacity duration-500"
-                                                style={{ opacity: intensity * 0.3 }}
+                                                className="absolute inset-0 bg-green-500 transition-opacity duration-500"
+                                                style={{ opacity: intensity * 0.5 }}
                                             />
                                         )}
 
